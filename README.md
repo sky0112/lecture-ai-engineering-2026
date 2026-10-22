@@ -30,6 +30,9 @@ uv run pytest -q
 uv run python -m app.ask "LoRAとは何ですか？"
 ```
 
+回答のあとも同じチャットで続けて質問できます。終了するには `終了` または `exit` と入力します。
+コマンドライン引数は最初の質問で、省略すると講座固有の質問から始まります。
+
 詳しい手順は [lectures/01/problem.md](lectures/01/problem.md) を見てください。
 
 ## 構成
@@ -86,5 +89,7 @@ pyproject.toml / uv.lock  依存パッケージとその固定版
 ```bash
 AIE_MODEL=gemini-3.5-flash uv run python -m app.ask "LoRAとは何ですか？"
 ```
+
+同じ起動中は会話履歴が引き継がれます。別の起動には履歴は引き継がれません。
 
 無料枠には1分あたり・1日あたりのリクエスト上限があります。上限は [Gemini API のレート制限のページ](https://ai.google.dev/gemini-api/docs/rate-limits) で確認してください。
