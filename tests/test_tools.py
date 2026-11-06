@@ -2,6 +2,8 @@
 
 import json
 
+import pytest
+
 from app import tools
 
 
@@ -54,6 +56,26 @@ def test_make_quiz_uses_a_term_from_the_requested_lecture(monkeypatch):
 
 def test_make_quiz_reports_when_lecture_has_no_terms():
     assert "第99回の用語は用語集にありません" in tools.make_quiz(99)
+
+
+def test_save_learning_log_writes_content_to_learning_log_directory(tmp_path, monkeypatch):
+    monkeypatch.setattr(tools, "LEARNING_LOG_DIR", tmp_path / "learning_log")
+
+    result = tools.save_learning_log("今日はエージェントについて学んだ。")
+
+    saved_files = list((tmp_path / "learning_log").glob("*.md"))
+    assert len(saved_files) == 1
+    assert saved_files[0].read_text(encoding="utf-8") == "今日はエージェントについて学んだ。\n"
+    assert str(saved_files[0]) in result
+
+
+def test_save_learning_log_rejects_empty_content(tmp_path, monkeypatch):
+    monkeypatch.setattr(tools, "LEARNING_LOG_DIR", tmp_path / "learning_log")
+
+    with pytest.raises(ValueError, match="学習記録が空です"):
+        tools.save_learning_log("  \n")
+
+    assert not (tmp_path / "learning_log").exists()
 
 
 def test_default_question_of_lecture1_is_answerable_from_glossary():
